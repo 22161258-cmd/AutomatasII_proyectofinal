@@ -1,10 +1,10 @@
-""" Nodos del árbol sintáctico / árbol de expresión """
+
 
 
 class Nodo:
     campos = ()
-    tipo = None      # tipo resultante, anotado en el análisis semántico
-    simbolo = None   # entrada de la tabla de símbolos, anotado en el semántico
+    tipo = None     
+    simbolo = None   
 
     def __init__(self, *args, linea=0):
         for c, v in zip(self.campos, args):
@@ -12,7 +12,7 @@ class Nodo:
         self.linea = linea
 
 
-# ---- sentencias ----
+
 class Programa(Nodo):      campos = ('nombre', 'sentencias')
 class Declaracion(Nodo):   campos = ('tipo_decl', 'nombre', 'expr', 'es_const')
 class Asignacion(Nodo):    campos = ('nombre', 'expr')
@@ -29,11 +29,11 @@ class LlamadaSent(Nodo):   campos = ('llamada',)
 class Binario(Nodo):       campos = ('op', 'izq', 'der')
 class Unario(Nodo):        campos = ('op', 'expr')
 class Variable(Nodo):      campos = ('nombre',)
-class Acceso(Nodo):        campos = ('obj', 'attr')            # categoria.atributo
+class Acceso(Nodo):        campos = ('obj', 'attr')          
 class Llamada(Nodo):       campos = ('nombre', 'args')
 
 
-class Conversion(Nodo):    # lo inserta el semántico (casting implícito)
+class Conversion(Nodo):    
     campos = ('destino', 'expr')
     origen = None
 

@@ -1,4 +1,3 @@
-// OBJETIVO del Integrante 2 y 4: este programa debe compilarse, optimizarse y ejecutarse (salida esperada: 120)
 presupuesto "Factorial" {
   funcion entero factorial(entero n) {
     si (n <= 1) {

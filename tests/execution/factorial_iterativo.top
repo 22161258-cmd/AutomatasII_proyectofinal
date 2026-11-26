@@ -1,4 +1,3 @@
-// 10! con un ciclo mientras (solo enteros)
 presupuesto "Factorial" {
   entero n = 10;
   entero resultado = 1;

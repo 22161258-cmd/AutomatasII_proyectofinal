@@ -1,4 +1,3 @@
-// Decimales en ensamblador: se guardan como enteros en centavos
 presupuesto "Decimales" {
   decimal a = 12.34;
   decimal b = 0.66;

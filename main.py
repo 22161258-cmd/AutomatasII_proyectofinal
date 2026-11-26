@@ -1,4 +1,3 @@
-"""TopScript - compilador (CLI).   Uso:  python main.py programa.top [opciones]"""
 import argparse
 import sys
 

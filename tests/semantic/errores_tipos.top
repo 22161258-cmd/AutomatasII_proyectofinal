@@ -1,4 +1,3 @@
-// Cada línea marcada debe producir un error semántico de tipos
 presupuesto "Errores de tipos" {
   entero cantidad = 3.5;            // ERROR: decimal -> entero
   decimal monto = "hola";           // ERROR: texto -> decimal

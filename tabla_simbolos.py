@@ -1,29 +1,27 @@
-""" Tabla de símbolos (pila de ámbitos) y Tabla de direcciones """
 import re
 
 TAM = {'entero': 4, 'decimal': 8, 'texto': 4, 'logico': 4, 'categoria': 20}
-# categoria = limite(8) @0 + gastado(8) @8 + nombre(4) @16
 
 
 class Simbolo:
     def __init__(self, nombre, clase, tipo, ambito, linea):
         self.nombre = nombre
-        self.clase = clase          # variable | constante | parametro | categoria | funcion
-        self.tipo = tipo            # tipo de dato (o tipo de retorno si es funcion)
-        self.ambito = ambito        # nivel de anidamiento (0 = global)
+        self.clase = clase
+        self.tipo = tipo
+        self.ambito = ambito
         self.linea = linea
         self.inicializado = False
-        self.segmento = None        # 'global' | 'local'   (tabla de direcciones)
-        self.offset = None          # desplazamiento dentro del segmento
-        self.id_unico = nombre      # nombre sin ambigüedad usado en los cuádruplos
-        self.params = []            # solo funciones: [(tipo, nombre), ...]
+        self.segmento = None
+        self.offset = None
+        self.id_unico = nombre
+        self.params = []
 
 
 class TablaSimbolos:
     def __init__(self):
-        self.pila = [{}]            # una entrada (diccionario) por ámbito
-        self.todos = []             # historial de todos los símbolos declarados
-        self._ids = set()           # ids únicos ya asignados
+        self.pila = [{}]
+        self.todos = []
+        self._ids = set()
         self._off = {'global': 0, 'local': 0}
         self.en_funcion = False
 
@@ -45,7 +43,6 @@ class TablaSimbolos:
         self.en_funcion = False
 
     def _id_unico(self, nombre):
-        """Nombre sin colisiones con temporales t<N> ni etiquetas L<N>."""
         cand, n = nombre, 1
         while cand in self._ids or re.fullmatch(r"(?:t|L)\d+", cand):
             n += 1
@@ -54,7 +51,6 @@ class TablaSimbolos:
         return cand
 
     def insertar(self, nombre, clase, tipo, linea):
-        """Inserta en el ámbito actual. Devuelve None si ya existe ahí."""
         if nombre in self.pila[-1]:
             return None
         s = Simbolo(nombre, clase, tipo, self.nivel, linea)
@@ -68,7 +64,6 @@ class TablaSimbolos:
         return s
 
     def buscar(self, nombre):
-        """Busca de el ámbito más interno al más externo."""
         for ambito in reversed(self.pila):
             if nombre in ambito:
                 return ambito[nombre]
