@@ -1,4 +1,4 @@
-# TopScript
+# TopScript 
 
 TopScript es un compilador académico para un lenguaje de dominio específico de presupuestos personales. Analiza programas, valida tipos y ámbitos, genera cuádruplos, aplica optimizaciones y permite ejecutarlos con un intérprete de referencia o generar ensamblador NASM x86 de 32 bits.
 
@@ -24,7 +24,7 @@ Comprueba que el compilador funciona con el ejemplo incluido:
 python main.py tests/execution/presupuesto_basico.top
 ```
 
-## Ejemplo mínimo
+## Ejemplo mínimo de TopScript
 
 ```topscript
 presupuesto "Octubre" {
