@@ -1,0 +1,4 @@
+presupuesto "Prueba" {
+    decimal ingreso = 1000.00;
+    ?
+}
