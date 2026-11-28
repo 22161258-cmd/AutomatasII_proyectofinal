@@ -1,10 +1,20 @@
+"""Conversión entre notaciones infija, prefija y postfija (Tema 2).
 
+Dos formas de trabajar:
+  1. Sobre el ÁRBOL de expresión del programa (recorrido postorden / preorden).
+  2. Sobre LISTAS DE TOKENS con los algoritmos clásicos (pila / shunting-yard):
+        infija -> postfija      postfija -> infija
+        postfija -> prefija     prefija  -> postfija
+Uso suelto:   python notaciones.py "(a + b) * c - 2"
+Nota: 'neg' es el operador menos unario (para no confundirlo con la resta).
+"""
 import re
 import sys
 from ast_nodes import (Programa, Declaracion, Asignacion, Categoria, Gasto, Si, Mientras,
                        Accion, Funcion, Retornar, Binario, Unario, Literal, Variable,
                        Acceso, Llamada, Conversion)
 
+# Precedencia: mayor número = se evalúa primero (coincide con la gramática de TopScript)
 PREC = {'o': 1, 'y': 2, '<': 4, '>': 4, '<=': 4, '>=': 4, '==': 4, '!=': 4,
         '+': 5, '-': 5, '*': 6, '/': 6}
 UNARIOS = {'no': 3, 'neg': 7}
@@ -18,6 +28,7 @@ def _prec(op):
     return PREC[op] if op in PREC else UNARIOS[op]
 
 
+# ====================== algoritmos sobre listas de tokens ======================
 def tokenizar(texto):
     texto, pos, tokens = texto.strip(), 0, []
     while pos < len(texto):
@@ -30,6 +41,7 @@ def tokenizar(texto):
 
 
 def infija_a_postfija(tokens):
+    """Algoritmo de la estación de maniobras (shunting-yard) con operadores unarios."""
     salida, pila, anterior_operando = [], [], False
     for t in tokens:
         if t == '(':
@@ -43,7 +55,7 @@ def infija_a_postfija(tokens):
             pila.pop()
             anterior_operando = True
         elif t == 'no' or (t == '-' and not anterior_operando):
-            pila.append('no' if t == 'no' else 'neg')
+            pila.append('no' if t == 'no' else 'neg')     # prefijo: no desapila nada
             anterior_operando = False
         elif t in PREC:
             while pila and pila[-1] != '(' and _prec(pila[-1]) >= PREC[t]:
@@ -82,7 +94,7 @@ def postfija_a_prefija(tokens):
 
 def prefija_a_postfija(tokens):
     pila = []
-    for t in reversed(tokens):
+    for t in reversed(tokens):                      # se lee de derecha a izquierda
         if t in PREC:
             if len(pila) < 2:
                 raise ValueError("expresión prefija mal formada")
@@ -100,7 +112,8 @@ def prefija_a_postfija(tokens):
 
 
 def postfija_a_infija(tokens):
-    pila = []
+    """Reconstruye la expresión con los paréntesis mínimos necesarios."""
+    pila = []                                       # (texto, precedencia)
     for t in tokens:
         if t in PREC:
             if len(pila) < 2:
@@ -135,7 +148,9 @@ def prefija_a_infija(tokens):
     return postfija_a_infija(prefija_a_postfija(tokens))
 
 
+# ====================== recorridos sobre el árbol de expresión ======================
 def _sin_conv(n):
+    """Las conversiones implícitas (casting) las inserta el compilador; no las escribió el usuario."""
     while isinstance(n, Conversion):
         n = n.expr
     return n
@@ -171,6 +186,7 @@ def tiene_llamada(n):
 
 
 def postfija_arbol(n):
+    """Recorrido postorden: hijos y al final el operador."""
     n = _sin_conv(n)
     if isinstance(n, Binario):
         return postfija_arbol(n.izq) + postfija_arbol(n.der) + [n.op]
@@ -185,6 +201,7 @@ def postfija_arbol(n):
 
 
 def prefija_arbol(n):
+    """Recorrido preorden: el operador y después los hijos."""
     n = _sin_conv(n)
     if isinstance(n, Binario):
         return [n.op] + prefija_arbol(n.izq) + prefija_arbol(n.der)
@@ -216,6 +233,7 @@ def _infija_con_llamadas(n):
 
 
 def tokens_infijos_arbol(n):
+    """Infija totalmente parentizada, construida directo del árbol (sirve de verificación)."""
     n = _sin_conv(n)
     if isinstance(n, Binario):
         return ['('] + tokens_infijos_arbol(n.izq) + [n.op] + tokens_infijos_arbol(n.der) + [')']
@@ -225,6 +243,7 @@ def tokens_infijos_arbol(n):
 
 
 def verificar(n):
+    """Comprueba que el recorrido del árbol y los algoritmos de pila den lo mismo."""
     if tiene_llamada(n):
         return
     post = postfija_arbol(n)
@@ -233,11 +252,13 @@ def verificar(n):
     assert prefija_a_postfija(prefija_arbol(n)) == post, "prefija -> postfija no regresa a la original"
 
 
+# ====================== recorrido del programa ======================
 def _es_atomo(n):
     return isinstance(_sin_conv(n), (Literal, Variable, Acceso))
 
 
 def expresiones_del_programa(sentencias, salida=None):
+    """Lista de (línea, etiqueta, nodo) con todas las expresiones no triviales del programa."""
     salida = [] if salida is None else salida
 
     def anota(linea, etiqueta, e):

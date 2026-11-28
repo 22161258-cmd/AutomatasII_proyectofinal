@@ -1,5 +1,12 @@
 import glob
 import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "tests"))
+import os
+os.chdir(ROOT)
 from main import compilar
 from errores import ERRORES
 from interprete import Interprete
@@ -31,9 +38,16 @@ def main():
         carpeta = ruta.split("/")[1] if "/" in ruta else ruta.split("\\")[1]
         texto = open(ruta, encoding="utf-8").read()
         try:
-            if carpeta == "semantic":
+            nombre = Path(ruta).name
+            if carpeta == "semantic" or nombre in {"lexico.top", "sintactico.top"}:
                 compilar(texto)
-                ok, detalle = ERRORES.hay(), f"{len(ERRORES.lista)} error(es) detectados"
+                tipos = {error[0] for error in ERRORES.lista}
+                esperado = {
+                    "lexico.top": "léxico",
+                    "sintactico.top": "sintáctico",
+                }.get(nombre)
+                ok = ERRORES.hay() and (esperado is None or esperado in tipos)
+                detalle = f"{len(ERRORES.lista)} error(es) detectados"
             else:
                 r = compilar(texto, usar_opt=False)
                 if not r.ok:

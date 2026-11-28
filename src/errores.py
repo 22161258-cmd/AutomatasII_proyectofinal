@@ -1,3 +1,4 @@
+"""Gestor central de errores (léxicos, sintácticos y semánticos)."""
 
 
 class GestorErrores:

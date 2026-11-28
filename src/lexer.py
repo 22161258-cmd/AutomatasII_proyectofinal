@@ -1,3 +1,4 @@
+"""Analizador léxico de TopScript en PLY"""
 
 import ply.lex as lex
 import unicodedata

@@ -1,3 +1,6 @@
+"""Analizador sintáctico de TopScript con PLY / LALR(1) 
+Cada producción construye un nodo del árbol ast_nodes.py """
+
 import ply.yacc as yacc
 from lexer import tokens, construir_lexer
 from errores import ERRORES
@@ -104,4 +107,148 @@ def p_accion(p):
 
 def p_funcion(p):
     'funcion : FUNCION tipo ID LPAREN params RPAREN bloque'
-    p
+    p[0] = Funcion(p[2], p[3], p[5], p[7], linea=p.lineno(1))
+
+
+def p_params(p):
+    '''params : empty
+              | lista_params'''
+    p[0] = p[1] or []
+
+
+def p_lista_params(p):
+    '''lista_params : lista_params COMMA param
+                    | param'''
+    p[0] = [p[1]] if len(p) == 2 else p[1] + [p[3]]
+
+
+def p_param(p):
+    'param : tipo ID'
+    p[0] = (p[1], p[2])
+
+
+def p_retorno(p):
+    'retorno : RETORNAR expr SEMI'
+    p[0] = Retornar(p[2], linea=p.lineno(1))
+
+
+def p_llamada_sent(p):
+    'llamada_sent : llamada SEMI'
+    p[0] = LlamadaSent(p[1], linea=p[1].linea)
+
+
+def p_llamada(p):
+    'llamada : ID LPAREN args RPAREN'
+    p[0] = Llamada(p[1], p[3], linea=p.lineno(1))
+
+
+def p_args(p):
+    '''args : empty
+            | lista_args'''
+    p[0] = p[1] or []
+
+
+def p_lista_args(p):
+    '''lista_args : lista_args COMMA expr
+                  | expr'''
+    p[0] = [p[1]] if len(p) == 2 else p[1] + [p[3]]
+
+
+# ---------------- expresiones ----------------
+def p_expr_bin(p):
+    '''expr : expr MAS expr
+            | expr MENOS expr
+            | expr POR expr
+            | expr DIV expr
+            | expr LT expr
+            | expr GT expr
+            | expr LE expr
+            | expr GE expr
+            | expr EQ expr
+            | expr NE expr
+            | expr Y expr
+            | expr O expr'''
+    p[0] = Binario(p[2], p[1], p[3], linea=p.lineno(2))
+
+
+def p_expr_neg(p):
+    'expr : MENOS expr %prec UMENOS'
+    p[0] = Unario('-', p[2], linea=p.lineno(1))
+
+
+def p_expr_no(p):
+    'expr : NO expr'
+    p[0] = Unario('no', p[2], linea=p.lineno(1))
+
+
+def p_expr_paren(p):
+    'expr : LPAREN expr RPAREN'
+    p[0] = p[2]
+
+
+def p_expr_ent(p):
+    'expr : NUM_ENT'
+    p[0] = Literal(p[1], 'entero', linea=p.lineno(1))
+
+
+def p_expr_dec(p):
+    'expr : NUM_DEC'
+    p[0] = Literal(p[1], 'decimal', linea=p.lineno(1))
+
+
+def p_expr_str(p):
+    'expr : STRING'
+    p[0] = Literal(p[1], 'texto', linea=p.lineno(1))
+
+
+def p_expr_verdadero(p):
+    'expr : VERDADERO'
+    p[0] = Literal(True, 'logico', linea=p.lineno(1))
+
+
+def p_expr_falso(p):
+    'expr : FALSO'
+    p[0] = Literal(False, 'logico', linea=p.lineno(1))
+
+
+def p_expr_id(p):
+    'expr : ID'
+    p[0] = Variable(p[1], linea=p.lineno(1))
+
+
+def p_expr_acceso(p):
+    'expr : ID DOT atributo'
+    p[0] = Acceso(p[1], p[3], linea=p.lineno(1))
+
+
+def p_atributo(p):
+    '''atributo : ID
+                | LIMITE'''
+    p[0] = p[1]    # 'limite' es palabra reservada, pero también es atributo de categoría
+
+
+def p_expr_llamada(p):
+    'expr : llamada'
+    p[0] = p[1]
+
+
+def p_error(p):
+    if any(e[0] == 'léxico' for e in ERRORES.lista):
+        return  # el error léxico ya explica el carácter inválido; evita mensajes sintácticos en cascada
+    if any(e[0] == 'sintáctico' for e in ERRORES.lista):
+        return  # solo se reporta el primer error sintáctico (evita cascadas)
+    if p is None:
+        ERRORES.add('sintáctico', 0, "fin de archivo inesperado (¿falta cerrar una llave?)")
+    else:
+        ERRORES.add('sintáctico', p.lineno, f"token inesperado {p.value!r}")
+
+
+def construir_parser():
+    return yacc.yacc(write_tables=False, debug=False)
+
+
+def analizar_sintaxis(texto):
+    """Devuelve el nodo Programa (o None si hubo errores)."""
+    lexer = construir_lexer()
+    parser = construir_parser()
+    return parser.parse(texto, lexer=lexer, tracking=True)

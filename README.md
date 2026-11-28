@@ -21,7 +21,7 @@ python -m pip install -r requirements.txt
 Comprueba que el compilador funciona con el ejemplo incluido:
 
 ```bash
-python main.py tests/execution/presupuesto_basico.top
+python src/main.py tests/execution/presupuesto_basico.top
 ```
 
 ## Ejemplo mínimo de TopScript
@@ -46,13 +46,13 @@ presupuesto "Octubre" {
 Guárdalo como `ejemplo.top` y ejecútalo con:
 
 ```bash
-python main.py ejemplo.top
+python src/main.py ejemplo.top
 ```
 
 ## Línea de comandos
 
 ```text
-python main.py ARCHIVO.top [opciones]
+python src/main.py ARCHIVO.top [opciones]
 ```
 
 | Opción | Descripción |
@@ -72,9 +72,9 @@ python main.py ARCHIVO.top [opciones]
 Las opciones de inspección se pueden combinar. Por ejemplo:
 
 ```bash
-python main.py ejemplo.top --tabla --cuadruplos --opt --costos
-python main.py ejemplo.top --asm ejemplo.asm
-python main.py ejemplo.top --correr-asm
+python src/main.py ejemplo.top --tabla --cuadruplos --opt --costos
+python src/main.py ejemplo.top --asm ejemplo.asm
+python src/main.py ejemplo.top --correr-asm
 ```
 
 ## Pruebas
@@ -82,7 +82,7 @@ python main.py ejemplo.top --correr-asm
 Ejecuta la suite disponible desde la raíz del proyecto:
 
 ```bash
-python run_tests.py
+python tests/run_tests.py
 ```
 
 Incluye pruebas unitarias y programas de ejemplo organizados por fase. Algunas pruebas de ensamblador requieren NASM, `ld` y Linux/WSL.
@@ -91,13 +91,13 @@ Incluye pruebas unitarias y programas de ejemplo organizados por fase. Algunas p
 
 | Archivo o carpeta | Responsabilidad |
 |---|---|
-| `main.py` | Interfaz de línea de comandos y coordinación de fases. |
-| `lexer.py`, `parser.py`, `ast_nodes.py` | Análisis léxico, sintáctico y nodos del AST. |
-| `semantico.py`, `tabla_simbolos.py`, `errores.py` | Tipos, ámbitos, símbolos y diagnósticos. |
-| `codigo_intermedio.py`, `notaciones.py` | Generación de cuádruplos y notaciones de expresiones. |
-| `optimizador.py` | Pases de optimización e informe de costos. |
-| `interprete.py` | Intérprete de referencia de los cuádruplos. |
-| `codigo_objeto.py`, `ensamblar.py` | Generación y ejecución de ensamblador x86 en Linux. |
+| `src/main.py` | Interfaz de línea de comandos y coordinación de fases. |
+| `src/lexer.py`, `src/parser.py`, `src/ast_nodes.py` | Análisis léxico, sintáctico y nodos del AST. |
+| `src/semantico.py`, `src/tabla_simbolos.py`, `src/errores.py` | Tipos, ámbitos, símbolos y diagnósticos. |
+| `src/codigo_intermedio.py`, `src/notaciones.py` | Generación de cuádruplos y notaciones de expresiones. |
+| `src/optimizador.py` | Pases de optimización e informe de costos. |
+| `src/interprete.py` | Intérprete de referencia de los cuádruplos. |
+| `src/codigo_objeto.py`, `src/ensamblar.py` | Generación y ejecución de ensamblador x86 en Linux. |
 | `pruebas_unitarias.py`, `run_tests.py`, `tests/` | Pruebas y programas de muestra. |
 | `requirements.txt` | Dependencias de Python. |
 
