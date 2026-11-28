@@ -1,4 +1,3 @@
-// Funciones: recursión, varios parámetros, decimales, texto, globales y llamadas anidadas
 presupuesto "Funciones" {
   entero llamadas = 0;
 

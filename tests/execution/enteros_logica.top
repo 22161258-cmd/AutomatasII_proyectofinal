@@ -1,4 +1,3 @@
-// Enteros, lógicos, texto, comparaciones, y/o/no, si/sino y ciclo
 presupuesto "Enteros y logica" {
   entero a = 7;
   entero b = -3;

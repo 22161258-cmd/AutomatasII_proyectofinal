@@ -1,4 +1,3 @@
-// Nombres que coinciden con registros, etiquetas o rutinas del ensamblador
 presupuesto "Nombres" {
   entero eax = 3;
   entero ax = 4;

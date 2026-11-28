@@ -1,4 +1,3 @@
-// Variables llamadas igual que los temporales del compilador (t1, t2...) o con sufijos parecidos
 presupuesto "Nombres" {
   entero t1 = 5;
   entero t1_2 = 7;

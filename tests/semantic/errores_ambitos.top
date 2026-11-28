@@ -1,4 +1,3 @@
-// Errores de declaración, ámbito, constantes, categorías y funciones
 presupuesto "Errores de ambito" {
   decimal ingreso = 100.0;
   decimal ingreso = 200.0;          // ERROR: redeclaración

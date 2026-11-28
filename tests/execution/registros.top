@@ -1,5 +1,3 @@
-// Presión de registros: más variables vivas que registros, ciclos anidados, llamadas dentro de ciclos,
-// recursión con acumulador, decimales y texto
 presupuesto "Registros" {
   entero a = 1;
   entero b = 2;

@@ -1,4 +1,3 @@
-// Serie de Fibonacci (primeros 10 términos) con ciclo mientras
 presupuesto "Fibonacci" {
   entero a = 0;
   entero b = 1;

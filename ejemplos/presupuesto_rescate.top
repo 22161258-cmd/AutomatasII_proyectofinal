@@ -1,6 +1,3 @@
-// Plan mensual para corregir un déficit y evitar nuevos sobregastos.
-// Separa primero gastos esenciales, calcula el ahorro posible y aplica
-// recortes graduales al ocio si las metas no caben en el ingreso.
 presupuesto "Plan de rescate mensual" {
   decimal ingreso = 18500.00;
   decimal meta_ahorro = 1500.00;

@@ -1,8 +1,3 @@
-"""Ejecuta toda la suite:  python run_tests.py
- - tests/semantic     : cada archivo DEBE reportar al menos un error semántico
- - tests/intermediate : debe compilar; y la versión OPTIMIZADA debe dar la misma salida que la original
- - tests/execution    : debe compilar y ejecutarse sin errores (opt y sin opt dan la misma salida)
-"""
 import glob
 import sys
 from main import compilar
@@ -18,10 +13,9 @@ def correr(quads):
 
 
 def verificar_asm(r, opt, salida_ref):
-    """El .asm (con y sin optimizar) debe imprimir lo mismo que el intérprete de referencia."""
     esperado = texto_esperado(salida_ref)
     try:
-        for quads, regs in ((r.quads, True), (opt, True), (r.quads, False)):     # con y sin registros
+        for quads, regs in ((r.quads, True), (opt, True), (r.quads, False)):
             if ensamblar_y_correr(generar_asm(quads, r.tabla, r.tipos_temp, registros=regs)) != esperado:
                 return False, f" | asm: ¡SALIDA DISTINTA! ({'con' if regs else 'sin'} registros)"
         return True, " | asm: ok (registros y memoria)"
