@@ -1,4 +1,5 @@
-"""Ensambla, enlaza y ejecuta un programa .asm (requiere nasm y ld; Linux o WSL)."""
+"""Ensambla, enlaza y ejecuta un programa .asm 
+    requiere nasm y ld; Linux o WSL"""
 import os
 import shutil
 import subprocess
